@@ -2,7 +2,7 @@
 module master(
     // External interfaces
     input clk,
-    input rst,
+    input rst_n,
     input mode,
     input read_en,
     input write_en,
@@ -39,8 +39,8 @@ module master(
     reg [2:0] j;
     integer STREAM_LEN;
     // Synchronous state transition
-    always @(posedge clk or posedge rst) begin
-        if (rst) begin
+    always @(posedge clk or posedge rst_n) begin
+        if (rst_n) begin
             state    <= IDLE;
        
             for (i_m = 0; i_m < 8; i_m = i_m + 1)
@@ -118,8 +118,8 @@ module master(
     end
     
    //  Output logic based on state
-    always @(posedge clk or posedge rst ) begin
-    if(rst) begin
+    always @(posedge clk or posedge rst_n ) begin
+        if(rst_n) begin
          ar_valid <= 0;
             r_ready  <= 0;
             aw_valid <= 0;
@@ -139,8 +139,8 @@ parameter MAX_COUNT = 10_000_000 -1;
 wire counter_en;
   reg [23:0] counter_10M;
 
-always @(posedge clk, posedge rst)
-if(rst)
+    always @(posedge clk, posedge rst_n)
+    if(rst_n)
 counter_10M <= 0;
 else if (counter_10M == MAX_COUNT)
 counter_10M <= 0;
@@ -150,9 +150,9 @@ counter_10M <=counter_10M +1'b1;
 assign counter_en = (counter_10M == 0);
 
 
-always @(posedge clk, posedge rst)
+    always @(posedge clk, posedge rst_n)
 begin
-if(rst) begin 
+    if(rst_n) begin 
     LED_OUT <= 4'd0;
      j <= 3'b000;
  end
