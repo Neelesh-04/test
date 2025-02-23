@@ -21,14 +21,14 @@ wire ar_ready, r_valid,ar_valid,
  wire [3:0] r_data;
  wire [3:0] LED_OUT;
  
-    master m(.clk(clk),.rst(rst_n),.mode(ui_in[0]),
+    master m(.clk(clk),.rst_n(rst_n),.mode(ui_in[0]),
 .ar_ready(ar_ready),.r_valid(r_valid),
 .ar_valid(ar_valid),.r_ready(r_ready),.aw_valid(aw_valid),
 .w_valid(w_valid),.aw_ready(aw_ready),.w_ready(w_ready),.b_valid(b_valid),
              .b_ready(b_ready),.aw_addr(aw_addr),.w_data(w_data),.ar_addr(ar_addr),.r_data(r_data),.read_en(ui_in[1]),.write_en(ui_in[2]),
 .LED_OUT(LED_OUT));
 
-    slave s(.clk(clk),.rst(rst_n),.ar_ready(ar_ready),.r_valid(r_valid),
+    slave s(.clk(clk),.rst_n(rst_n),.ar_ready(ar_ready),.r_valid(r_valid),
 .ar_valid(ar_valid),.r_ready(r_ready),.aw_valid(aw_valid),
 .w_valid(w_valid),.aw_ready(aw_ready),.w_ready(w_ready),.b_valid(b_valid),.b_ready(b_ready),
 .aw_addr(aw_addr),.w_data(w_data),.ar_addr(ar_addr),.r_data(r_data));
