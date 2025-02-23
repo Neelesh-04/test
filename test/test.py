@@ -1,6 +1,3 @@
-# SPDX-FileCopyrightText: © 2024 Tiny Tapeout
-# SPDX-License-Identifier: Apache-2.0
-
 import cocotb
 from cocotb.clock import Clock
 from cocotb.triggers import ClockCycles
@@ -8,33 +5,49 @@ from cocotb.triggers import ClockCycles
 
 @cocotb.test()
 async def test_project(dut):
-    dut._log.info("Start")
+    dut._log.info("Starting Testbench")
 
-    # Set the clock period to 10 us (100 KHz)
-    clock = Clock(dut.clk, 10, units="us")
+    # Generate 10 MHz clock (period = 100 ns, half-period = 50 ns)
+    clock = Clock(dut.clk, 100, units="ns")  
     cocotb.start_soon(clock.start())
 
-    # Reset
-    dut._log.info("Reset")
-    dut.ena.value = 1
-    dut.ui_in.value = 0
-    dut.uio_in.value = 0
-    dut.rst_n.value = 0
-    await ClockCycles(dut.clk, 10)
+    # Reset sequence
+    dut._log.info("Applying Reset")
     dut.rst_n.value = 1
+    await ClockCycles(dut.clk, 2)  # Small wait before asserting reset
+    dut.rst_n.value = 0
+    await ClockCycles(dut.clk, 2)
 
-    dut._log.info("Test project behavior")
+    # Test Case 1: mode = 1, write_en = 1, read_en = 0
+    dut._log.info("Test Case 1: Writing Data")
+    dut.mode.value = 1
+    dut.write_en.value = 1
+    dut.read_en.value = 0
+    await ClockCycles(dut.clk, 30)  # 3000 ns
 
-    # Set the input values you want to test
-    dut.ui_in.value = 20
-    dut.uio_in.value = 30
+    # Test Case 2: mode = 1, write_en = 0, read_en = 1
+    dut._log.info("Test Case 2: Reading Data")
+    dut.write_en.value = 0
+    dut.read_en.value = 1
+    await ClockCycles(dut.clk, 30)  # 3000 ns
 
-    # Wait for one clock cycle to see the output values
-    await ClockCycles(dut.clk, 1)
+    # Test Case 3: mode = 0, write_en = 1, read_en = 0
+    dut._log.info("Test Case 3: Writing Data in Different Mode")
+    dut.mode.value = 0
+    dut.write_en.value = 1
+    dut.read_en.value = 0
+    await ClockCycles(dut.clk, 30)  # 3000 ns
 
-    # The following assersion is just an example of how to check the output values.
-    # Change it to match the actual expected output of your module:
-    assert dut.uo_out.value == 50
+    # Test Case 4: mode = 0, write_en = 0, read_en = 1
+    dut._log.info("Test Case 4: Reading Data in Different Mode")
+    dut.write_en.value = 0
+    dut.read_en.value = 1
+    await ClockCycles(dut.clk, 30)  # 3000 ns
 
-    # Keep testing the module by changing the input values, waiting for
-    # one or more clock cycles, and asserting the expected output values.
+    # Test Case 5: Idle State
+    dut._log.info("Test Case 5: Idle Mode")
+    dut.write_en.value = 0
+    dut.read_en.value = 0
+    await ClockCycles(dut.clk, 500)  # 50,000 ns
+
+    dut._log.info("All test cases completed successfully")
