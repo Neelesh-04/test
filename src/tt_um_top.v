@@ -2,12 +2,12 @@
 
 module tt_um_top(
 input clk,
-input rst,
+input rst_n,
 input mode, // for controlling type of write
 input read_en,
 input write_en,  // enabling read/write
 output reg [6:0] sev_seg,
-output reg [3:0] anode //extra signal
+//output reg [3:0] anode //extra signal
     );
 
 wire ar_ready, r_valid,ar_valid,
@@ -33,7 +33,7 @@ slave s(.clk(clk),.rst(rst),.ar_ready(ar_ready),.r_valid(r_valid),
 
 always @(posedge clk)
 begin
-anode <= 4'b1110;
+//anode <= 4'b1110;
  case(LED_OUT)
         4'd0: sev_seg = 7'b0000001; // "0"  
         4'd1: sev_seg = 7'b1001111; // "1" 
