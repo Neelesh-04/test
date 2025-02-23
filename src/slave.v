@@ -4,7 +4,7 @@
 module slave(
     // External Inputs
     input clk,
-    input rst,
+    input rst_n,
     
     // Read Channel
     output reg ar_ready, r_valid,
@@ -36,9 +36,9 @@ module slave(
     integer STREAM_LEN;
     
     // **State Transition Logic**
-    always @(posedge clk or posedge rst) begin
+    always @(posedge clk or posedge rst_n) begin
        
-        if (rst) begin
+        if (rst_n) begin
             state <= IDLE;
 
              for (i_m = 0; i_m < 8; i_m = i_m + 1)
@@ -112,8 +112,8 @@ module slave(
     end
 
     // **Output Logic**
-    always @(posedge clk or posedge rst) begin
-    if(rst)begin
+    always @(posedge clk or posedge rst_n) begin
+        if(rst_n)begin
              ar_ready <= 0;
             r_valid  <= 0;
             aw_ready <= 0;
